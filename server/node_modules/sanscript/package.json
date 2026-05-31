@@ -1,0 +1,23 @@
+{
+  "name": "sanscript",
+  "version": "0.0.2",
+  "description": "Transliteration scheme for devanagari characters",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vikramiyer/sanscript.js.git"
+  },
+  "keywords": [
+    "sanskrit",
+    "transliteration"
+  ],
+  "author": "Vikram Iyer <vikram85.iyer@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vikramiyer/sanscript.js/issues"
+  },
+  "homepage": "https://github.com/vikramiyer/sanscript.js#readme"
+}

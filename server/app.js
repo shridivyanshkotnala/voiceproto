@@ -1,0 +1,85 @@
+import express from 'express'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import voiceRoutes from './src/routes/voice.routes.js'
+import languageRoutes from './src/routes/language.routes.js'
+import knowledgeRoutes from './src/routes/knowledge.routes.js'
+import retrievalRoutes from './src/routes/retrieval.routes.js'
+import responseRoutes from './src/routes/response.routes.js'
+import pronunciationRoutes from './src/routes/pronunciation.routes.js'
+import { ApiError } from './src/utils/ApiError.js'
+
+const app = express()
+
+// Normalizes repeated slashes so client typos like //api/... still reach routes.
+app.use((req, res, next) => {
+	const [pathname, query = ''] = req.url.split('?')
+	const normalizedPath = pathname.replace(/\/{2,}/g, '/')
+
+	if (normalizedPath !== pathname) {
+		console.warn(
+			`[url-normalized] ${req.method} ${pathname} -> ${normalizedPath}`,
+		)
+		req.url = query ? `${normalizedPath}?${query}` : normalizedPath
+	}
+
+	next()
+})
+
+// Allows frontend to call the voice transcription API securely.
+// Input: FRONTEND_URL env
+// Output: CORS-enabled API responses.
+app.use(
+	cors({
+		origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+		credentials: true,
+		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id'],
+	}),
+)
+
+app.use(cookieParser())
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+// Health check endpoint for deployment readiness.
+app.get('/health', (req, res) => {
+	res.status(200).json({ status: 'ok' })
+})
+
+app.use('/api/v1/voice', voiceRoutes)
+app.use('/api/v1/language', languageRoutes)
+app.use('/api/v1/knowledge', knowledgeRoutes)
+app.use('/api/v1/retrieval', retrievalRoutes)
+app.use('/api/v1/response', responseRoutes)
+app.use('/api/v1/pronunciation', pronunciationRoutes)
+app.use('/api/v1/optimization', pronunciationRoutes)
+
+app.use((req, res, next) => {
+	console.warn(`[404] ${req.method} ${req.originalUrl}`)
+	next(new ApiError(404, 'Route not found'))
+})
+
+// Centralized error handler for API consistency.
+app.use((error, req, res, next) => {
+	if (error?.name === 'MulterError') {
+		const message =
+			error.code === 'LIMIT_FILE_SIZE'
+				? 'Audio file exceeds 20MB limit.'
+				: error.message
+		const statusCode = error.code === 'LIMIT_FILE_SIZE' ? 413 : 400
+		return res.status(statusCode).json({ success: false, message })
+	}
+
+	const statusCode = error.statusCode || 500
+	const message = error.message || 'Internal server error'
+	console.error(`[${statusCode}] ${req.method} ${req.originalUrl} - ${message}`)
+
+	return res.status(statusCode).json({
+		success: false,
+		message,
+	})
+})
+
+export default app
