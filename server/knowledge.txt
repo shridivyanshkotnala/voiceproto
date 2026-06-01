@@ -23,3 +23,32 @@ A: Haan, yeh scanning software 14k aur 18k gold dono ki calculation karta hai.
 
 Q: Mam kya yeh MCX ke live rates ke basis par detect aur calculate karega?
 A: Haan, yeh MCX ke live rates ko continuously monitor karke usi basis par calculation karta hai.
+
+## Additional User Query Variations (English + Hinglish)
+
+Q: Can this system scan jewellery tags even if barcode or QR code is missing?
+A: Yes, it can scan jewellery tags even when barcode or QR code is missing, because it reads the text written on the tag directly.
+
+Q: Achha ma'am, kya yaha QR code ya barcode ke bina tags ko bhi scan kar sakta hai?
+A: Haan, yeh scanner QR code ya barcode ke bina bhi tags ko scan karta hai, kyunki yeh tag ka text directly read karta hai.
+
+Q: Achha ma'am, mujhe bataye ki kya yaha un tags ko bhi scan kar lenge jinka QR code ya barcode nahi hai?
+A: Haan, jinke tags par QR code ya barcode nahi hai, unko bhi yeh scanner text read karke scan kar leta hai.
+
+Q: Will scanner handle 14k and 18k gold calculations both?
+A: Yes, this scanning software supports and calculates both 14k and 18k gold.
+
+Q: Kya yeh software 14k aur 18k dono ka rate/cost calculation karega?
+A: Haan, yeh software 14k aur 18k dono gold ki calculation karta hai.
+
+Q: Ma'am, 14k aur 18k jewellery ka hisaab bhi isi scanner mein ho jayega?
+A: Haan, 14k aur 18k jewellery ke calculations bhi isi system mein ho jaate hain.
+
+Q: Does this calculate using MCX live gold rates automatically?
+A: Yes, it continuously tracks MCX live rates and performs calculations on that basis.
+
+Q: Kya calculation MCX ke live rate ke according auto update hoti rahegi?
+A: Haan, yeh MCX live rates ko monitor karta rehta hai aur usi ke basis par auto calculation karta hai.
+
+Q: Ma'am, yeh live MCX rate pakad ke uske hisaab se final value nikaalega?
+A: Haan, yeh system MCX live rate detect karke uske hisaab se value calculate karta hai.

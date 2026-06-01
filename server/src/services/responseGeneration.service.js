@@ -59,7 +59,7 @@ function extractTokens(value = '') {
 }
 
 function extractQAPairs(context = '') {
-  const qaRegex = /Q:\s*(.+?)\s*A:\s*(.+?)(?=\s*Q:|$)/gis
+  const qaRegex = /Q:\s*(.+?)\s*A:\s*(.+?)(?=\s*Q:|\n\s*##\s+|$)/gis
   const pairs = []
   let match
 
@@ -188,6 +188,32 @@ export async function generateBusinessAnswer({
 
   const cleanedContext = sanitizeContext(context)
   if (!cleanedContext) {
+    const canonicalFaqAnswer = await findKnowledgeBaseFaqAnswer(question)
+    if (canonicalFaqAnswer) {
+      await saveUsageRecord({
+        organizationId: 'default',
+        sessionId: sessionId || 'anonymous',
+        feature: 'response_generation',
+        model,
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        estimatedCost: 0,
+        requestType: 'completion',
+      })
+
+      return {
+        answer: canonicalFaqAnswer,
+        usage: {
+          model,
+          inputTokens: 0,
+          outputTokens: 0,
+          totalTokens: 0,
+          estimatedCost: 0,
+        },
+      }
+    }
+
     await saveUsageRecord({
       organizationId: 'default',
       sessionId: sessionId || 'anonymous',
