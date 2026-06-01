@@ -1,3 +1,25 @@
 # Knowledge Base
 
 Add your jewellery business knowledge content here.
+
+## English Q&A
+
+Q: Mam will this also scan tags without qr code or bar code?
+A: Yes, it will scan all jewellery with or without barcodes and QR codes. It directly scans the text written on the tag.
+
+Q: Mam will scanner also do calculations for 14k & 18k also?
+A: Yes, this scanning software can calculate both 14k and 18k gold.
+
+Q: Mam will this detect and calculate on basis of Live rates of MCX ?
+A: Yes, it continuously monitors live rates and calculates based on MCX live rates.
+
+## Hinglish Business Q&A
+
+Q: Mam kya yeh QR code ya barcode ke bina tags ko bhi scan karega?
+A: Haan, yeh scanner barcode/QR code ke bina bhi saare jewellery tags scan karta hai, kyunki yeh tag par likha text directly read karta hai.
+
+Q: Mam kya scanner 14k aur 18k ke calculations bhi karega?
+A: Haan, yeh scanning software 14k aur 18k gold dono ki calculation karta hai.
+
+Q: Mam kya yeh MCX ke live rates ke basis par detect aur calculate karega?
+A: Haan, yeh MCX ke live rates ko continuously monitor karke usi basis par calculation karta hai.
