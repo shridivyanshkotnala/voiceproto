@@ -1,4 +1,6 @@
 import OpenAI from 'openai'
+import fs from 'fs/promises'
+import path from 'path'
 import { ApiError } from '../utils/ApiError.js'
 import {
   RESPONSE_FALLBACKS,
@@ -17,6 +19,8 @@ const openai = new OpenAI({
   timeout: OPENAI_TIMEOUT_MS,
   maxRetries: OPENAI_MAX_RETRIES,
 })
+
+let cachedKnowledgeFaqPairs = null
 
 // Removes chunk headers and trims context for safer prompting.
 // Input: raw context string
@@ -60,6 +64,65 @@ function extractQAPairs(context = '') {
 
 function findContextFaqAnswer(question, context) {
   const pairs = extractQAPairs(context)
+  if (!pairs.length) {
+    return null
+  }
+
+  const queryTokens = extractTokens(question)
+  if (!queryTokens.length) {
+    return null
+  }
+
+  let bestMatch = null
+
+  for (const pair of pairs) {
+    const pairTokens = new Set(extractTokens(pair.question))
+    if (!pairTokens.size) {
+      continue
+    }
+
+    let overlap = 0
+    for (const token of queryTokens) {
+      if (pairTokens.has(token)) {
+        overlap += 1
+      }
+    }
+
+    const score = overlap / Math.max(queryTokens.length, pairTokens.size)
+    if (!bestMatch || score > bestMatch.score) {
+      bestMatch = {
+        answer: pair.answer,
+        score,
+      }
+    }
+  }
+
+  if (!bestMatch) {
+    return null
+  }
+
+  return bestMatch.score >= 0.35 ? bestMatch.answer : null
+}
+
+async function getKnowledgeFaqPairs() {
+  if (cachedKnowledgeFaqPairs) {
+    return cachedKnowledgeFaqPairs
+  }
+
+  try {
+    const knowledgeFilePath =
+      process.env.KNOWLEDGE_FILE_PATH || path.resolve(process.cwd(), 'knowledge.txt')
+    const knowledgeText = await fs.readFile(knowledgeFilePath, 'utf8')
+    cachedKnowledgeFaqPairs = extractQAPairs(knowledgeText)
+    return cachedKnowledgeFaqPairs
+  } catch {
+    cachedKnowledgeFaqPairs = []
+    return cachedKnowledgeFaqPairs
+  }
+}
+
+async function findKnowledgeBaseFaqAnswer(question) {
+  const pairs = await getKnowledgeFaqPairs()
   if (!pairs.length) {
     return null
   }
@@ -164,6 +227,32 @@ export async function generateBusinessAnswer({
 
     return {
       answer: faqAnswer,
+      usage: {
+        model,
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        estimatedCost: 0,
+      },
+    }
+  }
+
+  const canonicalFaqAnswer = await findKnowledgeBaseFaqAnswer(question)
+  if (canonicalFaqAnswer) {
+    await saveUsageRecord({
+      organizationId: 'default',
+      sessionId: sessionId || 'anonymous',
+      feature: 'response_generation',
+      model,
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+      estimatedCost: 0,
+      requestType: 'completion',
+    })
+
+    return {
+      answer: canonicalFaqAnswer,
       usage: {
         model,
         inputTokens: 0,
