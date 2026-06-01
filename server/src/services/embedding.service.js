@@ -3,6 +3,8 @@ import { ApiError } from '../utils/ApiError.js'
 
 const EMBEDDING_TIMEOUT_MS = Number(process.env.OPENAI_EMBEDDING_TIMEOUT_MS || 20000)
 const EMBEDDING_MAX_RETRIES = Number(process.env.OPENAI_EMBEDDING_MAX_RETRIES || 0)
+const DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small'
+const LEGACY_VECTOR_DIMENSIONS = 1536
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -10,22 +12,64 @@ const openai = new OpenAI({
   maxRetries: EMBEDDING_MAX_RETRIES,
 })
 
+function toPositiveInteger(value) {
+  const parsedValue = Number(value)
+  if (!Number.isFinite(parsedValue)) {
+    return null
+  }
+
+  const normalizedValue = Math.trunc(parsedValue)
+  return normalizedValue > 0 ? normalizedValue : null
+}
+
+function getEmbeddingConfig(overrides = {}) {
+  const model = overrides.model || process.env.OPENAI_EMBEDDING_MODEL || DEFAULT_EMBEDDING_MODEL
+  const overrideDimensions = toPositiveInteger(overrides.dimensions)
+  if (overrideDimensions) {
+    return { model, dimensions: overrideDimensions }
+  }
+
+  const configuredDimensions = toPositiveInteger(
+    process.env.OPENAI_EMBEDDING_DIMENSIONS,
+  )
+
+  if (configuredDimensions) {
+    return { model, dimensions: configuredDimensions }
+  }
+
+  if (model === 'text-embedding-3-large') {
+    return {
+      model,
+      // Backward-compatible default for existing Atlas indexes created at 1536.
+      dimensions: LEGACY_VECTOR_DIMENSIONS,
+    }
+  }
+
+  return { model, dimensions: null }
+}
+
 // Generates an embedding vector for given text.
 // Input: text string
 // Output: { embedding, usage }
-export async function generateEmbedding(text) {
-  const model = process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small'
+export async function generateEmbedding(text, overrides = {}) {
+  const { model, dimensions } = getEmbeddingConfig(overrides)
   if (!text || !text.trim()) {
     throw new ApiError(400, 'Cannot generate embedding for empty chunk.')
+  }
+
+  const embeddingPayload = {
+    model,
+    input: text,
+  }
+
+  if (dimensions) {
+    embeddingPayload.dimensions = dimensions
   }
 
   let response
   try {
     response = await openai.embeddings.create(
-      {
-        model,
-        input: text,
-      },
+      embeddingPayload,
       {
         timeout: EMBEDDING_TIMEOUT_MS,
         maxRetries: EMBEDDING_MAX_RETRIES,
@@ -56,5 +100,6 @@ export async function generateEmbedding(text) {
     embedding,
     usage: response.usage || {},
     model,
+    dimensions,
   }
 }

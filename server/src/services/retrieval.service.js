@@ -4,11 +4,24 @@ import { generateEmbedding } from './embedding.service.js'
 import { searchSimilarChunks } from './vectorStore.service.js'
 import { calculateUsageCost, saveUsageRecord } from './usageTracking.service.js'
 
+function parseVectorDimensionMismatch(error) {
+  const message = error?.message || ''
+  const match = message.match(/indexed with\s+(\d+)\s+dimensions\s+but queried with\s+(\d+)/i)
+  if (!match) {
+    return null
+  }
+
+  return {
+    indexedDimensions: Number(match[1]),
+    queriedDimensions: Number(match[2]),
+  }
+}
+
 // Retrieves top matching knowledge chunks for a query.
 // Input: query, topK, sessionId
 // Output: matches array
 export async function retrieveRelevantContext({ query, topK, sessionId }) {
-  const { embedding, usage, model } = await generateEmbedding(query)
+  let { embedding, usage, model } = await generateEmbedding(query)
 
   const inputTokens = usage.prompt_tokens || usage.total_tokens || 0
   const outputTokens = usage.completion_tokens || 0
@@ -31,11 +44,32 @@ export async function retrieveRelevantContext({ query, topK, sessionId }) {
     throw new ApiError(500, 'VECTOR_SEARCH_INDEX is not configured.')
   }
 
-  const matches = await searchSimilarChunks({
-    queryEmbedding: embedding,
-    topK: topK || DEFAULT_TOP_K,
-    indexName,
-  })
+  let matches
+  try {
+    matches = await searchSimilarChunks({
+      queryEmbedding: embedding,
+      topK: topK || DEFAULT_TOP_K,
+      indexName,
+    })
+  } catch (error) {
+    const mismatch = parseVectorDimensionMismatch(error)
+    if (!mismatch) {
+      throw error
+    }
+
+    const retriedEmbedding = await generateEmbedding(query, {
+      dimensions: mismatch.indexedDimensions,
+    })
+    embedding = retriedEmbedding.embedding
+    usage = retriedEmbedding.usage
+    model = retriedEmbedding.model
+
+    matches = await searchSimilarChunks({
+      queryEmbedding: embedding,
+      topK: topK || DEFAULT_TOP_K,
+      indexName,
+    })
+  }
 
   return {
     matches,
