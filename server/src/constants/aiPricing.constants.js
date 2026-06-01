@@ -7,4 +7,8 @@ export const AI_PRICING = {
     inputPerMillion: 0.02,
     outputPerMillion: 0,
   },
+  'text-embedding-3-large': {
+    inputPerMillion: 0.13,
+    outputPerMillion: 0,
+  },
 }

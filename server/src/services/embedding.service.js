@@ -14,10 +14,7 @@ const openai = new OpenAI({
 // Input: text string
 // Output: { embedding, usage }
 export async function generateEmbedding(text) {
-  const model = process.env.OPENAI_EMBEDDING_MODEL
-  if (!model) {
-    throw new ApiError(500, 'Embedding model is not configured.')
-  }
+  const model = process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-large'
   if (!text || !text.trim()) {
     throw new ApiError(400, 'Cannot generate embedding for empty chunk.')
   }

@@ -10,7 +10,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "nodemon": "nodemon index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "upload:knowledge": "node scripts/uploadKnowledge.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
