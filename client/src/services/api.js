@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, '') || ''
+import { getApiBaseUrl } from '../config/apiBaseUrl'
+
+const API_BASE_URL = getApiBaseUrl()
 
 function wait(duration = 700) {
   return new Promise((resolve) => {

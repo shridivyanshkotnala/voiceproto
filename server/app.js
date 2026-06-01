@@ -11,6 +11,29 @@ import { ApiError } from './src/utils/ApiError.js'
 
 const app = express()
 
+const configuredOrigins = String(process.env.FRONTEND_URL || '')
+	.split(',')
+	.map((value) => value.trim())
+	.filter(Boolean)
+
+const allowList = new Set([
+	'http://localhost:5173',
+	'http://127.0.0.1:5173',
+	...configuredOrigins,
+])
+
+function isAllowedOrigin(origin) {
+	if (!origin) return true
+	if (allowList.has(origin)) return true
+
+	try {
+		const { hostname } = new URL(origin)
+		return hostname.endsWith('.vercel.app')
+	} catch {
+		return false
+	}
+}
+
 // Normalizes repeated slashes so client typos like //api/... still reach routes.
 app.use((req, res, next) => {
 	const [pathname, query = ''] = req.url.split('?')
@@ -31,7 +54,13 @@ app.use((req, res, next) => {
 // Output: CORS-enabled API responses.
 app.use(
 	cors({
-		origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+		origin: (origin, callback) => {
+			if (isAllowedOrigin(origin)) {
+				return callback(null, true)
+			}
+
+			return callback(new Error(`CORS blocked for origin: ${origin}`))
+		},
 		credentials: true,
 		methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id'],
