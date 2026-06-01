@@ -21,6 +21,18 @@ const openai = new OpenAI({
 })
 
 let cachedKnowledgeFaqPairs = null
+const HINGLISH_MARKERS = new Set([
+  'kya',
+  'yeh',
+  'aur',
+  'ke',
+  'bina',
+  'par',
+  'karega',
+  'haan',
+  'dono',
+  'basis',
+])
 
 // Removes chunk headers and trims context for safer prompting.
 // Input: raw context string
@@ -62,8 +74,23 @@ function extractQAPairs(context = '') {
   return pairs
 }
 
-function findContextFaqAnswer(question, context) {
-  const pairs = extractQAPairs(context)
+function detectQuestionLanguage(text = '') {
+  const tokens = extractTokens(text)
+  if (!tokens.length) {
+    return 'english'
+  }
+
+  let markerCount = 0
+  for (const token of tokens) {
+    if (HINGLISH_MARKERS.has(token)) {
+      markerCount += 1
+    }
+  }
+
+  return markerCount >= 2 ? 'hinglish' : 'english'
+}
+
+function findBestFaqMatch(question, pairs = []) {
   if (!pairs.length) {
     return null
   }
@@ -73,9 +100,15 @@ function findContextFaqAnswer(question, context) {
     return null
   }
 
+  const queryLanguage = detectQuestionLanguage(question)
+  const sameLanguagePairs = pairs.filter(
+    (pair) => detectQuestionLanguage(pair.question) === queryLanguage,
+  )
+  const candidatePairs = sameLanguagePairs.length ? sameLanguagePairs : pairs
+
   let bestMatch = null
 
-  for (const pair of pairs) {
+  for (const pair of candidatePairs) {
     const pairTokens = new Set(extractTokens(pair.question))
     if (!pairTokens.size) {
       continue
@@ -102,6 +135,11 @@ function findContextFaqAnswer(question, context) {
   }
 
   return bestMatch.score >= 0.35 ? bestMatch.answer : null
+}
+
+function findContextFaqAnswer(question, context) {
+  const pairs = extractQAPairs(context)
+  return findBestFaqMatch(question, pairs)
 }
 
 async function getKnowledgeFaqPairs() {
@@ -123,44 +161,7 @@ async function getKnowledgeFaqPairs() {
 
 async function findKnowledgeBaseFaqAnswer(question) {
   const pairs = await getKnowledgeFaqPairs()
-  if (!pairs.length) {
-    return null
-  }
-
-  const queryTokens = extractTokens(question)
-  if (!queryTokens.length) {
-    return null
-  }
-
-  let bestMatch = null
-
-  for (const pair of pairs) {
-    const pairTokens = new Set(extractTokens(pair.question))
-    if (!pairTokens.size) {
-      continue
-    }
-
-    let overlap = 0
-    for (const token of queryTokens) {
-      if (pairTokens.has(token)) {
-        overlap += 1
-      }
-    }
-
-    const score = overlap / Math.max(queryTokens.length, pairTokens.size)
-    if (!bestMatch || score > bestMatch.score) {
-      bestMatch = {
-        answer: pair.answer,
-        score,
-      }
-    }
-  }
-
-  if (!bestMatch) {
-    return null
-  }
-
-  return bestMatch.score >= 0.35 ? bestMatch.answer : null
+  return findBestFaqMatch(question, pairs)
 }
 
 // Generates a factual business answer from retrieved context.
