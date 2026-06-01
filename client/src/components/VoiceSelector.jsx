@@ -3,9 +3,9 @@ import { setSelectedVoiceProfile } from '../features/voice/voiceSlice'
 import { Select } from './ui/select'
 
 const voiceOptions = [
-  { label: 'Professional Female', value: 'PROFESSIONAL_FEMALE' },
-  { label: 'Luxury Female', value: 'LUXURY_FEMALE' },
-  { label: 'Friendly Female', value: 'FRIENDLY_FEMALE' },
+  { label: 'Voice 1', value: 'PROFESSIONAL_FEMALE' },
+  { label: 'Voice 2', value: 'LUXURY_FEMALE' },
+  { label: 'Voice 3', value: 'FRIENDLY_FEMALE' },
 ]
 
 export function VoiceSelector() {
