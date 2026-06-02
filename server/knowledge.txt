@@ -52,3 +52,71 @@ A: Haan, yeh MCX live rates ko monitor karta rehta hai aur usi ke basis par auto
 
 Q: Ma'am, yeh live MCX rate pakad ke uske hisaab se final value nikaalega?
 A: Haan, yeh system MCX live rate detect karke uske hisaab se value calculate karta hai.
+
+## 14k/18k/22k Support - Extended Variations
+
+Q: Ma'am, kya yeh scanner 14k aur 18k gold ka bhi rate nikaal sakta hai?
+A: Haan, yeh scanner 14k aur 18k gold dono ka rate aur calculation kar sakta hai.
+
+Q: Ma'am, agar jewellery 18k ki ho toh kya system uski pricing calculate karega?
+A: Ji haan, system 18k jewellery ki pricing aur calculation kar sakta hai.
+
+Q: Mam, 14k gold ka hisaab bhi isi software mein ho jayega?
+A: Haan, 14k gold ki calculations bhi isi software mein ho jaati hain.
+
+Q: Ma'am, yeh scanner sirf 22k ke liye hai ya 14k aur 18k bhi support karta hai?
+A: Yeh scanner 14k, 18k aur 22k sabhi gold categories ko support karta hai.
+
+Q: Mam, alag-alag carat ke gold items ka calculation bhi kar sakte hain kya?
+A: Haan, system alag-alag carat ke gold items ki calculation kar sakta hai.
+
+Q: Ma'am, agar item 14k ka ho toh scanner automatically calculation kar lega?
+A: Ji haan, 14k item scan karne par system automatic calculation kar sakta hai.
+
+Q: Mam, 18k jewellery ka pura valuation bhi isi software se ho jayega?
+A: Haan, 18k jewellery ka valuation aur calculation isi software se kiya ja sakta hai.
+
+Q: Ma'am, kya yeh software low purity gold jaise 14k aur 18k ko bhi handle karta hai?
+A: Ji haan, software 14k aur 18k gold items ko bhi handle aur calculate kar sakta hai.
+
+Q: Mam, 14k aur 18k dono ke liye alag formula lag sakta hai kya?
+A: Haan, system selected pricing formula ke basis par 14k aur 18k dono ki calculations kar sakta hai.
+
+Q: Ma'am, agar mere paas mixed stock hai jisme 14k aur 18k dono hain toh kya scanner dono calculate karega?
+A: Haan, scanner 14k aur 18k dono jewellery items ko identify karke unki calculation kar sakta hai.
+
+Q: Mam 14k ka bhi kar dega na?
+A: Haan, system 14k gold ka rate aur calculation kar dega.
+
+Q: 18k wala item scan karu toh rate aa jayega?
+A: Haan, 18k item scan karne par uska rate aur calculation aa jayega.
+
+Q: Mam ye 22k ke alawa 14k pe bhi kaam karega?
+A: Haan, yeh software 22k ke saath 14k gold par bhi kaam karta hai.
+
+Q: Agar 18k ka necklace ho toh uska hisaab bhi nikaal dega?
+A: Ji haan, 18k necklace ka hisaab aur calculation bhi nikaal dega.
+
+Q: 14k aur 18k dono support hai ya sirf 22k?
+A: System 14k, 18k aur 22k tino ko support karta hai.
+
+Q: Scanner ko kaise pata chalega ki item 14k hai?
+A: Scanner selected gold purity setting aur item details ke basis par 14k item ka calculation karta hai.
+
+Q: 14k gold ki pricing bhi same system se hogi?
+A: Haan, 14k gold ki pricing bhi isi system se ho sakti hai.
+
+Q: 18k ka rate calculate karne ke liye alag setting lagti hai kya?
+A: 18k calculation ke liye required pricing settings select karke system easily rate calculate kar deta hai.
+
+Q: Mam mixed karat stock bhi handle kar lega?
+A: Haan, system mixed karat stock ko bhi handle karke calculation kar sakta hai.
+
+Q: 14k, 18k aur 22k sabka calculation ek hi software mein ho jayega?
+A: Ji haan, 14k, 18k aur 22k sabka calculation ek hi software mein ho jata hai.
+
+Q: mam kya yeah 18k & 14k dono ki calculations karsakta hai ?
+A: Haan, yeh software 18k aur 14k dono ki calculations kar sakta hai.
+
+Q: like maam kya yeah 18k & 14k gold calculation karsakta hai ?
+A: Ji haan, yeh system 18k aur 14k gold dono ka calculation kar sakta hai.
