@@ -1,0 +1,26 @@
+{
+  "generatedAt": "2026-06-05",
+  "status": "not_measured",
+  "notes": "Voice experience metrics require live browser + device testing and ElevenLabs integrations. Playback state now drives voice status, but no live recordings were executed in this audit.",
+  "recording": {
+    "microphonePermission": "not_tested",
+    "silenceDetection": "not_tested",
+    "autoSubmit": "not_tested"
+  },
+  "playback": {
+    "autoResponse": "not_tested",
+    "autoVoicePlayback": "not_tested",
+    "timeToFirstVoiceMs": null,
+    "timeToFullVoiceMs": null,
+    "voiceContinuity": null,
+    "voiceQuality": null,
+    "voiceNaturalness": null,
+    "voiceStability": null
+  },
+  "pronunciationAudit": {
+    "status": "not_measured",
+    "notes": "Unified response prompt includes pronunciation rules for ttsText (Devanagari conversion, carat conversion, operators). Requires live samples to verify output.",
+    "samplesTested": 0,
+    "score": null
+  }
+}

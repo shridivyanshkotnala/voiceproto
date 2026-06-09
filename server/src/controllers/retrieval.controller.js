@@ -6,8 +6,14 @@ import { runRetrieval } from '../services/retrieval.layer.service.js'
 // Input: { query, sessionId }
 // Output: retrieval payload
 export const retrievalSearchController = asyncHandler(async (req, res) => {
-  const { query, sessionId } = req.body
-  const result = await runRetrieval({ query, sessionId })
+  const { query, sessionId, conversationHistory } = req.body
+  const result = await runRetrieval({
+    query,
+    sessionId,
+    conversationHistory: Array.isArray(conversationHistory)
+      ? conversationHistory.slice(-5)
+      : [],
+  })
 
   return res
     .status(200)

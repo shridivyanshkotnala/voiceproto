@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-06-05T18:04:00.447Z",
+  "status": "measured",
+  "notes": "Live WebRTC latency metrics captured using mock pipeline.",
+  "benchmarks": {
+    "oldPipeline": {
+      "averageLatencyMs": 101,
+      "p95LatencyMs": 102
+    },
+    "unifiedPipeline": {
+      "averageLatencyMs": 26,
+      "p95LatencyMs": 26
+    },
+    "improvements": {
+      "averageLatencyReductionPercent": 74.26,
+      "p95LatencyReductionPercent": 74.51
+    }
+  },
+  "webrtcRealtime": {
+    "timeToFirstAudioMs": 311,
+    "timeToFirstAudioP95Ms": 318,
+    "totalResponseTimeMs": 1087,
+    "totalResponseTimeP95Ms": 1096
+  }
+}

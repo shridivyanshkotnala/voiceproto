@@ -1,7 +1,6 @@
 import { ApiError } from '../utils/ApiError.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
-import { optimizePronunciation } from '../services/pronunciation.service.js'
 
 // Handles pronunciation optimization requests.
 // Input: { responseText, languageProfile }
@@ -13,7 +12,20 @@ export const optimizePronunciationController = asyncHandler(async (req, res) => 
     throw new ApiError(400, 'responseText is required')
   }
 
-  const result = await optimizePronunciation({ responseText, languageProfile })
+  const result = {
+    originalResponse: responseText,
+    ttsOptimizedResponse: responseText,
+    usage: {
+      model: 'unified-response',
+      inputTokens: 0,
+      outputTokens: 0,
+      totalTokens: 0,
+      estimatedCost: 0,
+      provider: 'OpenAI',
+      isMock: true,
+    },
+    languageProfile,
+  }
 
   return res
     .status(200)

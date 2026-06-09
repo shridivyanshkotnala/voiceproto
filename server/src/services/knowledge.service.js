@@ -24,7 +24,7 @@ export async function ingestKnowledgeDocument({ file, sessionId }) {
       chunkCount: 0,
     })
 
-    const chunks = chunkDocument(content)
+    const chunks = chunkDocument(content, { documentType })
     console.info(
       `[knowledge-ingest] documentId=${document._id} name="${documentName}" chunks=${chunks.length}`,
     )

@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-06-05T16:56:40.205Z",
+  "status": "not_measured",
+  "notes": "Realtime latency requires live WebRTC session metrics. Populate by ingesting metrics payloads from realtime sessions.",
+  "oldSystem": {
+    "timeToFirstAudioMs": null,
+    "totalResponseTimeMs": null,
+    "playbackDelayMs": null,
+    "interruptionHandlingMs": null,
+    "perceivedLatencyScore": null
+  },
+  "webrtcSystem": {
+    "timeToFirstAudioMs": null,
+    "totalResponseTimeMs": null,
+    "playbackDelayMs": null,
+    "interruptionHandlingMs": null,
+    "perceivedLatencyScore": null
+  },
+  "improvements": {
+    "timeToFirstAudioPercent": null,
+    "totalResponsePercent": null,
+    "playbackDelayPercent": null,
+    "interruptionHandlingPercent": null
+  }
+}

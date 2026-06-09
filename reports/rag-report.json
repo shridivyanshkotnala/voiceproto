@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-06-05",
+  "status": "not_measured",
+  "notes": "RAG evaluation requires 50+ live queries against the knowledge base with ground truth labels. No live retrieval runs were executed in this audit.",
+  "sampleSize": 0,
+  "categories": [
+    "Weight",
+    "Pricing",
+    "Purity",
+    "Labour",
+    "Wastage",
+    "Inventory",
+    "Barcode",
+    "Scanner",
+    "Hallmarking",
+    "Diamond Pricing",
+    "Formula Queries"
+  ],
+  "metrics": {
+    "retrievalAccuracy": null,
+    "contextRelevance": null,
+    "hallucinationRate": null,
+    "chunkRelevanceScore": null
+  },
+  "topFailures": [],
+  "methodology": {
+    "retrieval": "MongoDB Atlas $vectorSearch (topK=20, final=12).",
+    "filtering": "Similarity threshold and dedupe by chunk text.",
+    "contextBuilder": "Concatenated [Chunk N] blocks."
+  }
+}

@@ -1,51 +1,35 @@
 import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
 import { ChatInput } from '../components/ChatInput'
 import { ChatWindow } from '../components/ChatWindow'
 import { Header } from '../components/Header'
 import { LanguageSelector } from '../components/LanguageSelector'
 import { VoiceButton } from '../components/VoiceButton'
-import { VoicePlayer } from '../components/VoicePlayer'
 import { VoiceSelector } from '../components/VoiceSelector'
 import { Button } from '../components/ui/button'
 import { useChat } from '../hooks/useChat'
-import { useVoiceRecorder } from '../hooks/useVoiceRecorder'
-import { useTranscribeAudioMutation } from '../features/voice/voiceApi'
-import { setVoiceStatus } from '../store/settingsSlice'
-import { inferAudioExtension } from '../utils/audio'
+import { VoiceStatusIndicator } from '../features/realtime/components/VoiceStatusIndicator'
+import { RealtimeVoicePlayer } from '../features/realtime/components/RealtimeVoicePlayer'
+import { useRealtimeVoice } from '../features/realtime/hooks/useRealtimeVoice'
 
 export default function Page() {
-  const dispatch = useDispatch()
-  const voiceStatus = useSelector((state) => state.settings.voiceStatus)
   const { messages, loading, sendMessage, clearChat } = useChat()
   const [inputValue, setInputValue] = useState('')
-  const [transcribeAudio] = useTranscribeAudioMutation()
+  const { currentState, toggleRecording } = useRealtimeVoice()
 
-  async function handleTranscription(blob, mimeType) {
-    const extension = inferAudioExtension(mimeType)
-    const formData = new FormData()
-    formData.append('audio', blob, `recording.${extension}`)
-
-    const response = await Promise.race([
-      transcribeAudio(formData).unwrap(),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('STT timeout')), 35000),
-      ),
-    ])
-    const transcript = response?.data?.transcript || ''
-
-    if (!transcript) {
-      throw new Error('Empty transcript')
-    }
-
-    setInputValue('')
-    await sendMessage(transcript)
-  }
-
-  const { toggleRecording } = useVoiceRecorder({
-    onTranscription: handleTranscription,
-    onStatusChange: (status) => dispatch(setVoiceStatus(status)),
-  })
+  const voiceStatus = {
+    IDLE: 'idle',
+    LISTENING: 'listening',
+    PROCESSING: 'processing',
+    TRANSCRIBING: 'processing',
+    SEARCHING_KNOWLEDGE: 'processing',
+    GENERATING_RESPONSE: 'processing',
+    SYNTHESIZING: 'processing',
+    STREAMING_AUDIO: 'speaking',
+    SPEAKING: 'speaking',
+    COMPLETE: 'idle',
+    INTERRUPTED: 'idle',
+    ERROR: 'idle',
+  }[currentState]
 
   async function handleSend(message) {
     await sendMessage(message)
@@ -53,7 +37,7 @@ export default function Page() {
   }
 
   function handleVoiceToggle() {
-    toggleRecording(voiceStatus === 'listening')
+    toggleRecording()
   }
 
   return (
@@ -79,7 +63,10 @@ export default function Page() {
               <VoiceButton status={voiceStatus} onToggleStatus={handleVoiceToggle} />
             </div>
             <div className="sm:col-span-2 lg:col-span-3">
-              <VoicePlayer />
+              <VoiceStatusIndicator />
+            </div>
+            <div className="sm:col-span-2 lg:col-span-3">
+              <RealtimeVoicePlayer />
             </div>
           </div>
         </section>

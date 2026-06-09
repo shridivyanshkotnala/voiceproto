@@ -3,6 +3,31 @@ import { ApiError } from '../utils/ApiError.js'
 
 const DEFAULT_BASE_URL = 'https://api.elevenlabs.io'
 
+function resolveOutputFormat(preferredFormat) {
+  return String(
+    preferredFormat || process.env.ELEVENLABS_TTS_OUTPUT_FORMAT || 'webm_44100_128',
+  ).trim()
+}
+
+function resolveAcceptHeader(outputFormat) {
+  const format = String(outputFormat || '').toLowerCase()
+  if (format.startsWith('webm')) {
+    return 'audio/webm; codecs=opus'
+  }
+  if (format.startsWith('pcm') || format.startsWith('wav')) {
+    return 'audio/wav'
+  }
+  return 'audio/mpeg; codecs=mp3'
+}
+
+function resolveContentType(headers, outputFormat) {
+  const providerContentType = headers?.get?.('content-type')
+  if (providerContentType) {
+    return providerContentType
+  }
+  return resolveAcceptHeader(outputFormat)
+}
+
 // Streams TTS audio from ElevenLabs.
 // Input: { text, voiceId, modelId, voiceSettings }
 // Output: { stream, headers }
@@ -11,6 +36,8 @@ export async function streamElevenLabsTTS({
   voiceId,
   modelId,
   voiceSettings,
+  outputFormat,
+  optimizeStreamingLatency,
 }) {
   const apiKey = process.env.ELEVENLABS_API_KEY
   const baseUrl = process.env.ELEVENLABS_API_URL || DEFAULT_BASE_URL
@@ -25,20 +52,28 @@ export async function streamElevenLabsTTS({
 
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), 35000)
+  const resolvedOutputFormat = resolveOutputFormat(outputFormat)
+  const url = new URL(`${baseUrl}/v1/text-to-speech/${voiceId}/stream`)
+  if (Number.isFinite(optimizeStreamingLatency)) {
+    url.searchParams.set(
+      'optimize_streaming_latency',
+      String(Math.max(0, Math.min(4, Math.trunc(optimizeStreamingLatency)))),
+    )
+  }
 
   try {
-    const response = await fetch(`${baseUrl}/v1/text-to-speech/${voiceId}/stream`, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'xi-api-key': apiKey,
         'Content-Type': 'application/json',
-        Accept: 'audio/mpeg',
+        Accept: resolveAcceptHeader(resolvedOutputFormat),
       },
       body: JSON.stringify({
         text,
         model_id: modelId,
         voice_settings: voiceSettings,
-        output_format: 'mp3_44100_128',
+        output_format: resolvedOutputFormat,
       }),
       signal: controller.signal,
     })
@@ -63,6 +98,7 @@ export async function streamElevenLabsTTS({
     return {
       stream: Readable.fromWeb(response.body),
       headers: response.headers,
+      contentType: resolveContentType(response.headers, resolvedOutputFormat),
     }
   } catch (error) {
     console.error('TTS streaming failure:', error)

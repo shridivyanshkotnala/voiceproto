@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-06-05T18:19:35.456Z",
+  "status": "measured",
+  "notes": "WebRTC load tests executed using mock pipeline. rampMs=10, timeoutMs=30000.",
+  "scenarios": [
+    {
+      "name": "webrtc-load-25",
+      "concurrentUsers": 25,
+      "result": "pass",
+      "errorRate": 0,
+      "avgConnectTimeMs": 548,
+      "rates": {
+        "connectionSuccessRate": 100,
+        "streamingSuccessRate": 100,
+        "responseSuccessRate": 100
+      }
+    },
+    {
+      "name": "webrtc-load-50",
+      "concurrentUsers": 50,
+      "result": "pass",
+      "errorRate": 0,
+      "avgConnectTimeMs": 781,
+      "rates": {
+        "connectionSuccessRate": 100,
+        "streamingSuccessRate": 100,
+        "responseSuccessRate": 100
+      }
+    },
+    {
+      "name": "webrtc-load-100",
+      "concurrentUsers": 100,
+      "result": "pass",
+      "errorRate": 0,
+      "avgConnectTimeMs": 1646,
+      "rates": {
+        "connectionSuccessRate": 100,
+        "streamingSuccessRate": 100,
+        "responseSuccessRate": 100
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "generatedAt": "2026-06-05T21:03:01.571Z",
+  "sampleSize": 100,
+  "before": {
+    "averageContextChars": 869,
+    "averageChunkCount": 12
+  },
+  "after": {
+    "averageContextChars": 629,
+    "averageChunkCount": 5,
+    "contextReduction": 0.2762
+  }
+}

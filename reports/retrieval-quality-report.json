@@ -1,0 +1,19 @@
+{
+  "generatedAt": "2026-06-05T21:03:01.570Z",
+  "sampleSize": 100,
+  "metrics": {
+    "retrievalAccuracy": 0.7,
+    "answerRelevance": 0.78,
+    "hallucinationRate": 0.3,
+    "hinglishQuerySuccess": 0.75,
+    "formulaRetrievalAccuracy": 0.5
+  },
+  "latency": {
+    "queryNormalizationTime": 0.01,
+    "vectorSearchTime": 0.03,
+    "keywordSearchTime": 0.22,
+    "rerankingTime": 0.11,
+    "compressionTime": 0.09,
+    "totalRetrievalTime": 0.46
+  }
+}

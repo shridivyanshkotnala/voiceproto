@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-06-06T07:04:58.508Z",
+  "samples": 50,
+  "oldSystem": {
+    "averageTotalLatencyMs": 11679.87
+  },
+  "streamingSystem": {
+    "averageFirstTokenMs": 981.77,
+    "averageFirstAudioMs": 1626.39,
+    "averageResponseCompletionMs": 5573.18,
+    "averageTotalLatencyMs": 5573.18
+  },
+  "improvementPercent": 86.08
+}

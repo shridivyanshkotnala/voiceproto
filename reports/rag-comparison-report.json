@@ -1,0 +1,28 @@
+{
+  "generatedAt": "2026-06-05T21:03:01.570Z",
+  "sampleSize": 100,
+  "oldRag": {
+    "retrievalAccuracy": 0.6,
+    "averageContextChars": 869
+  },
+  "newRag": {
+    "retrievalAccuracy": 0.7,
+    "averageContextChars": 629,
+    "hallucinationRate": 0.3,
+    "answerRelevance": 0.78,
+    "hinglishQuerySuccess": 0.75,
+    "formulaRetrievalAccuracy": 0.5
+  },
+  "improvements": {
+    "retrievalAccuracyDelta": 0.1,
+    "contextReduction": 0.2762
+  },
+  "successCriteriaCheck": {
+    "retrievalAccuracyAbove85": false,
+    "hallucinationBelow5": false,
+    "contextReductionAbove40": false,
+    "answerRelevanceAbove90": false,
+    "hinglishSuccessAbove90": false,
+    "formulaAccuracyAbove95": false
+  }
+}

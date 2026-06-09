@@ -13,5 +13,7 @@ const knowledgeChunkSchema = new mongoose.Schema(
 )
 
 knowledgeChunkSchema.index({ documentId: 1, chunkIndex: 1 })
+knowledgeChunkSchema.index({ chunkText: 'text' })
+knowledgeChunkSchema.index({ 'metadata.documentType': 1 })
 
 export const KnowledgeChunk = mongoose.model('KnowledgeChunk', knowledgeChunkSchema)

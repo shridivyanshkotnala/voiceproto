@@ -2,6 +2,7 @@ export const RESPONSE_DEFAULTS = {
   language: 'english',
   hinglishStyle: 'business',
   formality: 'professional',
+  complexity: 'medium',
   persona: 'customer',
   preferredResponseStyle: 'same_as_user',
 }

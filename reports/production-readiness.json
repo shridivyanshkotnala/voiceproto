@@ -1,0 +1,51 @@
+{
+  "generatedAt": "2026-06-05",
+  "score": 74,
+  "summary": "Core pipeline is unified and instrumented for usage. Rate limiting, request IDs, and basic request logging added; auth, monitoring, and load testing remain outstanding.",
+  "checks": {
+    "security": {
+      "corsAllowList": "pass",
+      "authNAuthZ": "fail",
+      "rateLimiting": "pass",
+      "inputValidation": "partial",
+      "secretsManagement": "pass",
+      "dependencyRisk": "unknown"
+    },
+    "reliability": {
+      "centralErrorHandler": "pass",
+      "timeoutGuards": "pass",
+      "retries": "partial",
+      "circuitBreaker": "fail",
+      "gracefulDegradation": "partial"
+    },
+    "observability": {
+      "structuredLogging": "partial",
+      "requestTracing": "partial",
+      "metrics": "partial",
+      "alerting": "fail"
+    },
+    "data": {
+      "dbConnectionHandling": "partial",
+      "schemaValidation": "partial",
+      "backupStrategy": "unknown"
+    },
+    "scalability": {
+      "statelessServices": "pass",
+      "cacheStrategy": "partial",
+      "queueing": "fail",
+      "horizontalScaling": "partial"
+    },
+    "frontend": {
+      "errorStates": "partial",
+      "timeoutHandling": "pass",
+      "accessibility": "partial"
+    }
+  },
+  "recommendations": [
+    "Introduce authentication (JWT or session) and tenant scoping for usage logs.",
+    "Persist request logs to centralized storage (ELK/Datadog) and add correlation IDs across services.",
+    "Add monitoring dashboards for latency, error rate, and token usage.",
+    "Add server-side validation for request payload sizes and content.",
+    "Add background queue for STT/TTS with retry and circuit breakers."
+  ]
+}

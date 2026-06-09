@@ -9,6 +9,8 @@ import { knowledgeApi } from '../features/knowledge/knowledgeApi'
 import { retrievalApi } from '../features/retrieval/retrievalApi'
 import { responseApi } from '../features/response/responseApi'
 import { pronunciationApi } from '../features/pronunciation/pronunciationApi'
+import realtimeReducer from '../features/realtime/store/realtimeSlice'
+import voiceStreamingReducer from '../features/realtime/store/voiceStreamingSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +18,8 @@ export const store = configureStore({
     settings: settingsReducer,
     voice: voiceReducer,
     language: languageReducer,
+    realtime: realtimeReducer,
+    voiceStreaming: voiceStreamingReducer,
     [voiceApi.reducerPath]: voiceApi.reducer,
     [languageApi.reducerPath]: languageApi.reducer,
     [knowledgeApi.reducerPath]: knowledgeApi.reducer,

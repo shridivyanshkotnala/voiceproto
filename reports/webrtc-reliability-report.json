@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-06-05T18:04:00.443Z",
+  "status": "measured",
+  "environment": "local-mock",
+  "notes": "Worker completed without fatal errors.",
+  "totals": {
+    "sessions": 30,
+    "bargeInSessions": 10,
+    "reconnectSessions": 10
+  },
+  "rates": {
+    "webrtcConnectionSuccessRate": 100,
+    "streamingPlaybackSuccessRate": 100,
+    "autoSubmitSuccessRate": 100,
+    "voiceResponseSuccessRate": 100,
+    "bargeInSuccessRate": 100,
+    "reconnectSuccessRate": 100
+  },
+  "latency": {
+    "connectTime": {
+      "avg": 227,
+      "p95": 305
+    },
+    "timeToFirstAudio": {
+      "avg": 311,
+      "p95": 318
+    },
+    "totalConversation": {
+      "avg": 1087,
+      "p95": 1096
+    }
+  },
+  "criticalErrors": 0
+}

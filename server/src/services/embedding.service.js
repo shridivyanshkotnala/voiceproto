@@ -5,12 +5,21 @@ const EMBEDDING_TIMEOUT_MS = Number(process.env.OPENAI_EMBEDDING_TIMEOUT_MS || 2
 const EMBEDDING_MAX_RETRIES = Number(process.env.OPENAI_EMBEDDING_MAX_RETRIES || 0)
 const DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small'
 const LEGACY_VECTOR_DIMENSIONS = 1536
+const EMBEDDING_CACHE_TTL_MS = Number(
+  process.env.EMBEDDING_CACHE_TTL_MS || 10 * 60 * 1000,
+)
+const ENABLE_EMBEDDING_CACHE =
+  String(process.env.ENABLE_EMBEDDING_CACHE).toLowerCase() === 'true'
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  timeout: EMBEDDING_TIMEOUT_MS,
-  maxRetries: EMBEDDING_MAX_RETRIES,
-})
+const embeddingCache = new Map()
+
+function getOpenAIClient() {
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+    timeout: EMBEDDING_TIMEOUT_MS,
+    maxRetries: EMBEDDING_MAX_RETRIES,
+  })
+}
 
 function toPositiveInteger(value) {
   const parsedValue = Number(value)
@@ -57,6 +66,19 @@ export async function generateEmbedding(text, overrides = {}) {
     throw new ApiError(400, 'Cannot generate embedding for empty chunk.')
   }
 
+  const cacheKey = `${model}:${dimensions || 'default'}:${text.trim()}`
+  if (ENABLE_EMBEDDING_CACHE) {
+    const cached = embeddingCache.get(cacheKey)
+    if (cached && cached.expiresAt > Date.now()) {
+      return {
+        embedding: cached.embedding,
+        usage: cached.usage,
+        model,
+        dimensions,
+      }
+    }
+  }
+
   const embeddingPayload = {
     model,
     input: text,
@@ -68,6 +90,7 @@ export async function generateEmbedding(text, overrides = {}) {
 
   let response
   try {
+    const openai = getOpenAIClient()
     response = await openai.embeddings.create(
       embeddingPayload,
       {
@@ -94,6 +117,14 @@ export async function generateEmbedding(text, overrides = {}) {
   const embedding = response.data?.[0]?.embedding
   if (!embedding) {
     throw new ApiError(502, 'Failed to generate embedding')
+  }
+
+  if (ENABLE_EMBEDDING_CACHE) {
+    embeddingCache.set(cacheKey, {
+      embedding,
+      usage: response.usage || {},
+      expiresAt: Date.now() + EMBEDDING_CACHE_TTL_MS,
+    })
   }
 
   return {

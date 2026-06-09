@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-06-05T17:40:40.173Z",
+  "status": "measured",
+  "notes": "Live WebRTC latency metrics captured using mock pipeline.",
+  "benchmarks": {},
+  "webrtcRealtime": {
+    "timeToFirstAudioMs": 310,
+    "timeToFirstAudioP95Ms": 314,
+    "totalResponseTimeMs": 1086,
+    "totalResponseTimeP95Ms": 1092
+  }
+}

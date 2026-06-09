@@ -160,8 +160,7 @@ export function useVoiceRecorder({ onTranscription, onStatusChange }) {
 
         try {
           await onTranscription?.(blob, blob.type)
-          onStatusChange?.('speaking')
-          setTimeout(() => onStatusChange?.('idle'), 800)
+          onStatusChange?.('idle')
         } catch {
           onStatusChange?.('idle')
         } finally {

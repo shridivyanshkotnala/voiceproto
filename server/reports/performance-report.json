@@ -1,0 +1,15 @@
+{
+  "iterations": 100,
+  "oldPipeline": {
+    "averageLatency": 103,
+    "p95Latency": 105,
+    "averageTokenUsage": 0,
+    "averageCost": 0
+  },
+  "unifiedPipeline": {
+    "averageLatency": 26,
+    "p95Latency": 26,
+    "averageTokenUsage": 0,
+    "averageCost": 0
+  }
+}

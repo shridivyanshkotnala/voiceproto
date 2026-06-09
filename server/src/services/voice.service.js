@@ -7,6 +7,7 @@ import { streamElevenLabsTTS } from './voiceStreaming.service.js'
 import { saveUsageRecord } from './usageTracking.service.js'
 
 const DEFAULT_MODEL = 'eleven_multilingual_v2'
+const DEFAULT_REALTIME_MODEL = 'eleven_flash_v2_5'
 
 function getVoiceSettings() {
   const stability = Number(process.env.ELEVENLABS_STABILITY ?? 0.4)
@@ -19,6 +20,24 @@ function getVoiceSettings() {
     similarity_boost: similarityBoost,
     style,
     use_speaker_boost: useSpeakerBoost !== 'false',
+  }
+}
+
+function getRealtimeVoiceSettings() {
+  const stability = Number(process.env.REALTIME_ELEVENLABS_STABILITY ?? 0.25)
+  const similarityBoost = Number(
+    process.env.REALTIME_ELEVENLABS_SIMILARITY_BOOST ?? 0.65,
+  )
+  const style = Number(process.env.REALTIME_ELEVENLABS_STYLE ?? 0)
+  const useSpeakerBoost = String(
+    process.env.REALTIME_ELEVENLABS_SPEAKER_BOOST ?? 'false',
+  )
+
+  return {
+    stability,
+    similarity_boost: similarityBoost,
+    style,
+    use_speaker_boost: useSpeakerBoost === 'true',
   }
 }
 
@@ -37,9 +56,9 @@ function parseAudioDuration(headers) {
 }
 
 // Synthesizes audio for the provided text.
-// Input: { text, voiceProfile, sessionId }
+// Input: { text, voiceProfile, sessionId, realtimeMode }
 // Output: { stream, contentType, audioDuration }
-export async function synthesizeVoice({ text, voiceProfile, sessionId }) {
+export async function synthesizeVoice({ text, voiceProfile, sessionId, realtimeMode = false }) {
   if (!text || typeof text !== 'string') {
     throw new ApiError(400, 'Text is required')
   }
@@ -56,15 +75,29 @@ export async function synthesizeVoice({ text, voiceProfile, sessionId }) {
     throw new ApiError(400, 'Invalid voice profile')
   }
 
-  const modelId = process.env.ELEVENLABS_TTS_MODEL || DEFAULT_MODEL
-  const voiceSettings = getVoiceSettings()
+  const modelId = realtimeMode
+    ? process.env.REALTIME_ELEVENLABS_TTS_MODEL ||
+      process.env.ELEVENLABS_TTS_MODEL ||
+      DEFAULT_REALTIME_MODEL
+    : process.env.ELEVENLABS_TTS_MODEL || DEFAULT_MODEL
+  const voiceSettings = realtimeMode ? getRealtimeVoiceSettings() : getVoiceSettings()
+  const outputFormat = realtimeMode
+    ? process.env.REALTIME_ELEVENLABS_TTS_OUTPUT_FORMAT ||
+      process.env.ELEVENLABS_TTS_OUTPUT_FORMAT ||
+      'webm_44100_128'
+    : process.env.ELEVENLABS_TTS_OUTPUT_FORMAT
+  const optimizeStreamingLatency = realtimeMode
+    ? Number(process.env.REALTIME_ELEVENLABS_OPTIMIZE_STREAMING_LATENCY ?? 3)
+    : Number(process.env.ELEVENLABS_OPTIMIZE_STREAMING_LATENCY ?? NaN)
   const startedAt = Date.now()
 
-  const { stream, headers } = await streamElevenLabsTTS({
+  const { stream, headers, contentType } = await streamElevenLabsTTS({
     text: trimmedText,
     voiceId: resolved.voiceId,
     modelId,
     voiceSettings,
+    outputFormat,
+    optimizeStreamingLatency,
   })
 
   const generationTime = Date.now() - startedAt
@@ -94,7 +127,7 @@ export async function synthesizeVoice({ text, voiceProfile, sessionId }) {
 
   return {
     stream,
-    contentType: 'audio/mpeg',
+    contentType: contentType || 'audio/webm; codecs=opus',
     audioDuration,
   }
 }

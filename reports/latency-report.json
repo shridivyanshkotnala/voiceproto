@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-06-05",
+  "status": "not_measured",
+  "notes": "No live benchmarking executed in this audit. Metrics require running the full STT→RAG→Unified→TTS pipeline with production-like data and instrumentation.",
+  "pipelines": {
+    "oldPipeline": {
+      "description": "Legacy multi-call pipeline (language analysis + response gen + hinglish + pronunciation).",
+      "metrics": null
+    },
+    "currentPipeline": {
+      "description": "Embedding + retrieval + unified response + TTS.",
+      "metrics": null
+    }
+  },
+  "stages": {
+    "stt": { "minMs": null, "avgMs": null, "p95Ms": null, "worstMs": null },
+    "embedding": { "minMs": null, "avgMs": null, "p95Ms": null, "worstMs": null },
+    "vectorSearch": { "minMs": null, "avgMs": null, "p95Ms": null, "worstMs": null },
+    "responseGeneration": { "minMs": null, "avgMs": null, "p95Ms": null, "worstMs": null },
+    "tts": { "minMs": null, "avgMs": null, "p95Ms": null, "worstMs": null },
+    "frontendPlayback": { "minMs": null, "avgMs": null, "p95Ms": null, "worstMs": null }
+  },
+  "endToEnd": {
+    "totalResponseTimeMs": null,
+    "timeToFirstTokenMs": null,
+    "timeToFirstAudioMs": null,
+    "fullVoiceResponseTimeMs": null
+  },
+  "bottleneckAnalysis": {
+    "primary": null,
+    "secondary": null,
+    "notes": "Run instrumentation on server (OpenAI latency, retrieval latency, TTS stream start) and browser playback timing for accurate bottleneck detection."
+  }
+}

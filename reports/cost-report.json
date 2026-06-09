@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-06-05",
+  "status": "not_measured",
+  "notes": "Cost analysis requires usage logs from MongoDB (AiUsage) after running sample traffic. No production logs were analyzed in this audit.",
+  "sampleSize": 0,
+  "tokenUsage": {
+    "averageInputTokens": null,
+    "averageOutputTokens": null,
+    "averageTotalTokens": null,
+    "highestCostQuery": null,
+    "lowestCostQuery": null
+  },
+  "costs": {
+    "totalCost": null,
+    "averageCostPerRequest": null,
+    "breakdown": {
+      "stt": null,
+      "embedding": null,
+      "responseGeneration": null,
+      "tts": null
+    }
+  },
+  "openAiModels": {
+    "embeddingModel": "text-embedding-3-small",
+    "generationModel": "OPENAI_MODEL (env)"
+  },
+  "pricingReference": {
+    "gpt-4o-mini": { "inputPerMillion": 0.15, "outputPerMillion": 0.6 },
+    "text-embedding-3-small": { "inputPerMillion": 0.02, "outputPerMillion": 0 },
+    "text-embedding-3-large": { "inputPerMillion": 0.13, "outputPerMillion": 0 }
+  },
+  "optimizationSuggestions": [
+    "Enable caching for identical queries to reduce embedding + generation calls.",
+    "Trim context to highest-relevance chunks to reduce prompt tokens.",
+    "Use adaptive topK based on similarity threshold.",
+    "Add TTS text length guardrails to avoid verbose responses."
+  ]
+}

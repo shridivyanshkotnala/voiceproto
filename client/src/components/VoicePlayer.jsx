@@ -6,6 +6,7 @@ import {
   setAudioError,
   setAudioPlaying,
 } from '../features/voice/voiceSlice'
+import { setVoiceStatus } from '../store/settingsSlice'
 import { Button } from './ui/button'
 
 function formatTime(value) {
@@ -26,6 +27,7 @@ export function VoicePlayer() {
     audioError,
     lastGeneratedAudio,
   } = useSelector((state) => state.voice)
+  const voiceStatus = useSelector((state) => state.settings.voiceStatus)
 
   useEffect(() => {
     const audio = audioRef.current
@@ -40,14 +42,21 @@ export function VoicePlayer() {
 
     function handlePlay() {
       dispatch(setAudioPlaying(true))
+      dispatch(setVoiceStatus('speaking'))
     }
 
     function handlePause() {
       dispatch(setAudioPlaying(false))
+      if (voiceStatus === 'speaking') {
+        dispatch(setVoiceStatus('idle'))
+      }
     }
 
     function handleEnded() {
       dispatch(setAudioPlaying(false))
+      if (voiceStatus === 'speaking') {
+        dispatch(setVoiceStatus('idle'))
+      }
     }
 
     function handleError() {
@@ -67,7 +76,7 @@ export function VoicePlayer() {
       audio.removeEventListener('ended', handleEnded)
       audio.removeEventListener('error', handleError)
     }
-  }, [dispatch])
+  }, [dispatch, voiceStatus])
 
   useEffect(() => {
     if (!lastGeneratedAudio?.audioUrl) {

@@ -11,21 +11,34 @@
     "dev": "nodemon index.js",
     "nodemon": "nodemon index.js",
     "test": "node --test",
-    "upload:knowledge": "node scripts/uploadKnowledge.js"
+    "upload:knowledge": "node scripts/uploadKnowledge.js",
+    "benchmark:rag": "node scripts/ragBenchmarkReport.js",
+    "benchmark:rag-optimization": "node scripts/ragOptimizationBenchmark.js",
+    "benchmark:streaming": "node scripts/streamingBenchmark.js",
+    "audit:rag-performance": "node scripts/ragPerformanceAudit.js",
+    "audit:rag-quality-upgrade": "node scripts/ragQualityUpgradeAudit.js",
+    "test:realtime": "node --test tests/realtimeVoice.test.js tests/webrtcConnection.test.js tests/bargeIn.test.js tests/streamingAudio.test.js tests/silenceDetection.test.js",
+    "report:realtime": "node scripts/realtimeLatencyReport.js",
+    "loadtest:realtime-streaming": "node scripts/realtimeStreamingLoadTest.js"
   },
   "dependencies": {
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.4.0",
     "mongoose": "^8.19.0",
     "sanscript": "^0.0.2",
     "openai": "^4.104.0",
     "mongodb": "^6.20.0",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "socket.io": "^4.8.1",
+    "wrtc": "^0.4.7",
+    "node-pre-gyp": "^0.17.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.14",
-    "supertest": "^7.1.4"
+    "supertest": "^7.1.4",
+    "socket.io-client": "^4.8.1"
   }
 }

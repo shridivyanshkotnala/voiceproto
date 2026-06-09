@@ -1,16 +1,15 @@
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMessage, clearChat as clearChatAction, setLoading } from '../store/chatSlice'
-import { useLanguageProfile } from '../features/language/useLanguageProfile'
 import { useGenerateResponseMutation } from '../features/response/responseApi'
 import { useSynthesizeVoiceMutation } from '../features/voice/voiceApi'
-import { useOptimizePronunciationMutation } from '../features/pronunciation/pronunciationApi'
 import {
   setAudioError,
   setAudioLoading,
   setAudioPlaying,
   setLastGeneratedAudio,
 } from '../features/voice/voiceSlice'
+import { setLanguageProfile } from '../features/language/languageSlice'
 
 export function useChat() {
   const dispatch = useDispatch()
@@ -20,10 +19,8 @@ export function useChat() {
   const selectedVoiceProfile = useSelector(
     (state) => state.voice.selectedVoiceProfile,
   )
-  const { analyze } = useLanguageProfile()
   const [generateResponse] = useGenerateResponseMutation()
   const [synthesizeVoice] = useSynthesizeVoiceMutation()
-  const [optimizePronunciation] = useOptimizePronunciationMutation()
 
   const sendMessage = useCallback(
     async (inputValue) => {
@@ -32,8 +29,7 @@ export function useChat() {
         return
       }
 
-      const analysis = await analyze(message)
-      const cleanedMessage = analysis?.cleanedMessage || message
+      const cleanedMessage = message
 
       dispatch(
         addMessage({
@@ -49,7 +45,8 @@ export function useChat() {
       try {
         const payload = {
           question: cleanedMessage,
-          sessionId: analysis?.sessionId || sessionId,
+          sessionId: sessionId || undefined,
+          conversationHistory: [...messages, { role: 'user', content: cleanedMessage }].slice(-5),
         }
 
         const result = await generateResponse(payload).unwrap()
@@ -58,21 +55,15 @@ export function useChat() {
         const responseLanguageProfile = result?.data?.languageProfile || {
           language: result?.data?.language || 'english',
         }
+        const ttsOptimizedAnswer = result?.data?.ttsText || answer
+        const responseSessionId = result?.data?.sessionId || sessionId
 
-        let ttsOptimizedAnswer =
-          result?.data?.ttsOptimizedAnswer || answer
-
-        try {
-          const optimization = await optimizePronunciation({
-            responseText: answer,
-            languageProfile: responseLanguageProfile,
-          }).unwrap()
-
-          ttsOptimizedAnswer =
-            optimization?.data?.ttsOptimizedResponse || ttsOptimizedAnswer
-        } catch {
-          ttsOptimizedAnswer = ttsOptimizedAnswer || answer
-        }
+        dispatch(
+          setLanguageProfile({
+            ...responseLanguageProfile,
+            sessionId: responseSessionId,
+          }),
+        )
 
         dispatch(
           addMessage({
@@ -91,7 +82,7 @@ export function useChat() {
           const audioResult = await synthesizeVoice({
             text: ttsOptimizedAnswer,
             voiceProfile: selectedVoiceProfile,
-            sessionId: analysis?.sessionId || sessionId,
+            sessionId: responseSessionId || sessionId,
           }).unwrap()
 
           dispatch(
@@ -125,12 +116,11 @@ export function useChat() {
     [
       dispatch,
       loading,
-      analyze,
       generateResponse,
       sessionId,
       synthesizeVoice,
       selectedVoiceProfile,
-      optimizePronunciation,
+      messages,
     ],
   )
 
